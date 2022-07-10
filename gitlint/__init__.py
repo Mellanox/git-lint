@@ -22,8 +22,8 @@ It supports many filetypes, including:
     among others. See https://github.com/sk-/git-lint for the complete list.
 
 Usage:
-    git-lint [-f | --force] [--json] [--last-commit] [FILENAME ...]
-    git-lint [-t | --tracked] [-f | --force] [--json] [--last-commit]
+    git-lint [-f | --force] [--json] [--last-commit] [--since-commit] [FILENAME ...]
+    git-lint [-t | --tracked] [-f | --force] [--json] [--last-commit] [--since-commit]
     git-lint -h | --version
 
 Options:
@@ -210,7 +210,10 @@ def main(argv, stdout=sys.stdout, stderr=sys.stderr):
     if arguments['--last-commit']:
         commit = vcs.last_commit()
 
-    if arguments['FILENAME']:
+    if arguments['--since-commit']:
+        commit = arguments['FILENAME'][0]
+
+    if arguments['FILENAME'] and not arguments['--since-commit']:
         invalid_filenames = find_invalid_filenames(arguments['FILENAME'],
                                                    repository_root)
         if invalid_filenames:
