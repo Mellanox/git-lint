@@ -89,10 +89,16 @@ def modified_files(root, tracked_only=False, commit=None):
 
 
 def _modified_files_with_commit(root, commit):
+    root_commit = commit + '~1'
+    lcommit = last_commit()
+
+    if commit != lcommit:
+        root_commit = lcommit
+
     # Convert to unicode and split
     status_lines = subprocess.check_output([
         'git', 'diff-tree', '-r', '--root', '--no-commit-id', '--name-status',
-        commit
+        commit, root_commit
     ]).decode('utf-8').split(os.linesep)
 
     modified_file_status = utils.filter_lines(
@@ -134,7 +140,23 @@ def modified_lines(filename, extra_data, commit=None):
     blame_lines = subprocess.check_output(
         ['git', 'blame', '--porcelain', filename]).split(
             os.linesep.encode('utf-8'))
-    modified_line_numbers = utils.filter_lines(
-        blame_lines, commit + br' (?P<line>\d+) (\d+)', groups=('line', ))
 
-    return list(map(int, modified_line_numbers))
+    commit_list = []
+    lcommit = last_commit().encode('utf-8')
+    if lcommit != commit:
+        tmp = subprocess.check_output([
+        'git', 'rev-list', commit.decode("utf-8")  + '..' + lcommit.decode("utf-8")
+        ])
+        a = tmp.split(os.linesep.encode('utf-8'))
+        commit_list = subprocess.check_output([
+        'git', 'rev-list', commit.decode("utf-8")  + '..' + lcommit.decode("utf-8")
+        ]).strip().split(os.linesep.encode('utf-8'))
+    else:
+        commit_list.append(commit)
+
+    modified_line_numbers_list = []
+    for cmt in commit_list:
+        modified_line_numbers_generator = utils.filter_lines(blame_lines, cmt + br' (?P<line>\d+) (\d+)', groups=('line', ))
+        modified_line_numbers_list.extend(list(map(int, modified_line_numbers_generator)))
+
+    return list(modified_line_numbers_list)
