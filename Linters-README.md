@@ -4,8 +4,15 @@
 `.pylintrc`, put in root of the project
 
 ## exclude errors/warnings
+In configuration file
+
 `disable=R0912,C0302`
 
+Inline in code
+
+`# pylint: disable=no-member`
+
+See this [doc](https://pylint.pycqa.org/en/latest/user_guide/messages/message_control.html)
 
 # Cpplint
 
