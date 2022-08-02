@@ -39,6 +39,4 @@ OR
 
 ### Inline in code
 
-`# pylint: disable=no-member`
-
-#shellcheck disable=SC2001
+`#shellcheck disable=SC2001`
