@@ -4,11 +4,12 @@
 `.pylintrc`, put in root of the project
 
 ## exclude errors/warnings
-In configuration file
+
+### In configuration file
 
 `disable=R0912,C0302`
 
-Inline in code
+### Inline in code
 
 `# pylint: disable=no-member`
 
@@ -31,3 +32,13 @@ OR
     filter=-build/c++11
     filter=-build/include
   ```
+
+# Shellcheck
+
+## exclude errors/warnings
+
+### Inline in code
+
+`# pylint: disable=no-member`
+
+#shellcheck disable=SC2001
