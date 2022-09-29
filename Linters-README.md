@@ -15,6 +15,22 @@
 
 See this [doc](https://pylint.pycqa.org/en/latest/user_guide/messages/message_control.html)
 
+# Pycodestyle
+
+## configuration file
+
+from this [document](https://pycodestyle.pycqa.org/en/latest/intro.html#configuration)
+
+`setup.cfg`, put in root of the project
+
+## exclude errors/warnings
+
+```
+[pycodestyle]
+ignore = E226,E302,E71
+max-line-length = 100
+```
+
 # Cpplint
 
 ## configuration file
