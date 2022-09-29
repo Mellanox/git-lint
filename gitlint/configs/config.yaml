@@ -135,7 +135,8 @@ pycodestyle:
     - .py
   command: pycodestyle
   arguments:
-    - "--max-line-length=80"
+    #- "--max-line-length=80"
+    - ""
   filter: >-
     ^{filename}:(?P<line>{lines}):((?P<column>\d+):)?
     (?P<message_id>\S+) (?P<message>.+)$
