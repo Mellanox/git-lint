@@ -25,6 +25,8 @@ from this [document](https://pycodestyle.pycqa.org/en/latest/intro.html#configur
 
 ## exclude errors/warnings
 
+###In configuration file
+
 ```
 [pycodestyle]
 ignore = E226,E302,E71
