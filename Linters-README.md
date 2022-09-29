@@ -25,7 +25,7 @@ from this [document](https://pycodestyle.pycqa.org/en/latest/intro.html#configur
 
 ## exclude errors/warnings
 
-###In configuration file
+### In configuration file
 
 ```
 [pycodestyle]
