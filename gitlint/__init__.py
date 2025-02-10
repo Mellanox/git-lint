@@ -27,14 +27,15 @@ Usage:
     git-lint -h | --version
 
 Options:
-    -h             Show the usage patterns.
-    --version      Prints the version number.
-    -f --force     Shows all the lines with problems.
-    -t --tracked   Lints only tracked files.
-    --json         Prints the result as a json string. Useful to use it in
-                   conjunction with other tools.
-    --last-commit  Checks the last checked-out commit. This is mostly useful
-                   when used as: git checkout <revid>; git lint --last-commit.
+    -h              Show the usage patterns.
+    --version       Prints the version number.
+    -f --force      Shows all the lines with problems.
+    -t --tracked    Lints only tracked files.
+    --json          Prints the result as a json string. Useful to use it in
+                    conjunction with other tools.
+    --last-commit   Checks the last checked-out commit. This is mostly useful
+                    when used as: git checkout <revid>; git lint --last-commit.
+    --since-commit  Checks all the commits since the specified commit.
 """
 
 from __future__ import unicode_literals
