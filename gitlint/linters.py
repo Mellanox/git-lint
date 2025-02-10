@@ -116,6 +116,7 @@ def lint_command(name, program, arguments, filter_regex, filename, lines):
             comment['column'] = int(comment['column'])
         if 'severity' in comment:
             comment['severity'] = comment['severity'].title()
+        comment['filename'] = os.path.relpath(filename)
         result.append(comment)
 
     return {filename: {'comments': result}}

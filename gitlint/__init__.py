@@ -22,8 +22,8 @@ It supports many filetypes, including:
     among others. See https://github.com/sk-/git-lint for the complete list.
 
 Usage:
-    git-lint [-f | --force] [--json] [--last-commit] [--since-commit] [FILENAME ...]
-    git-lint [-t | --tracked] [-f | --force] [--json] [--last-commit] [--since-commit]
+    git-lint [-f | --force] [--json] [--clickable-messages] [--last-commit] [--since-commit] [FILENAME ...]
+    git-lint [-t | --tracked] [-f | --force] [--json] [--clickable-messages] [--last-commit] [--since-commit]
     git-lint -h | --version
 
 Options:
@@ -36,6 +36,9 @@ Options:
     --last-commit   Checks the last checked-out commit. This is mostly useful
                     when used as: git checkout <revid>; git lint --last-commit.
     --since-commit  Checks all the commits since the specified commit.
+    --clickable-messages
+                    Makes the messages clickable, starts with 'filename:line:column',
+                    which is Ctrl-Clickable in VSCode terminal.
 """
 
 from __future__ import unicode_literals
@@ -110,15 +113,19 @@ def get_config(repo_root):
     return linters.parse_yaml_config(yaml_config, repo_root)
 
 
-def format_comment(comment_data):
+def format_comment(clickable_messages, comment_data):
     """Formats the data returned by the linters.
 
     Given a dictionary with the fields: line, column, severity, message_id,
     message, will generate a message like:
 
-    'line {line}, col {column}: {severity}: [{message_id}]: {message}'
+    '{source_location}: {severity}: [{message_id}]: {message}'
 
-    Any of the fields may nbe absent.
+    Where source_location dependes on clickable_messages.
+    If True, the source_location will be '{filename}:{line}:{column}'
+    This format makes the message clickable (e.g. on VSCode's terminal).
+    If False, the source_location will be: 'line {line}, col {column}'
+    Any of the fields may be absent.
 
     Args:
       comment_data: dictionary with the linter data.
@@ -127,13 +134,19 @@ def format_comment(comment_data):
       a string with the formatted message.
     """
     format_pieces = []
-    # Line and column information
-    if 'line' in comment_data:
-        format_pieces.append('line {line}')
-    if 'column' in comment_data:
-        if format_pieces:
-            format_pieces.append(', ')
-        format_pieces.append('col {column}')
+
+    # Source location information
+    if clickable_messages and 'filename' in comment_data:
+        comment_data.setdefault('line', 0)
+        comment_data.setdefault('column', 0)
+        format_pieces.append('{filename}:{line}:{column}')
+    else:
+        if 'line' in comment_data:
+            format_pieces.append('line {line}')
+        if 'column' in comment_data:
+            if format_pieces:
+                format_pieces.append(', ')
+            format_pieces.append('col {column}')
     if format_pieces:
         format_pieces.append(': ')
 
@@ -242,7 +255,6 @@ def main(argv, stdout=sys.stdout, stderr=sys.stderr):
     files_with_problems = 0
     gitlint_config = get_config(repository_root)
     json_result = {}
-
     with futures.ThreadPoolExecutor(max_workers=multiprocessing.cpu_count())\
             as executor:
         processfile = functools.partial(process_file, vcs, commit,
@@ -271,7 +283,7 @@ def main(argv, stdout=sys.stdout, stderr=sys.stderr):
             else:
                 files_with_problems += 1
                 for data in result['comments']:
-                    formatted_message = format_comment(data)
+                    formatted_message = format_comment(arguments['--clickable-messages'], data)
                     output_lines.append(formatted_message)
                     data['formatted_message'] = formatted_message
 
